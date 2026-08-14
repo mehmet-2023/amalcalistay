@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="tr" style="scroll-behavior: smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="AMAL Değişim Çalıştayı - 404 Sayfası: Aradığınız sayfa bulunamadı." />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <title>404 - AMAL Değişim Çalıştayı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Italianno&family=Montserrat:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-burgundy-dark: #200204;
+        --accent-peach: #e8b796;
+        --accent-peach-light: #f7dcc9;
+        --accent-peach-glow: rgba(232, 183, 150, 0.35);
+        --text-light: #fef5ef;
+        --font-script: 'Italianno', cursive;
+        --font-heading: 'Cinzel', serif;
+        --font-body: 'Cormorant Garamond', Georgia, serif;
+        --font-sans: 'Montserrat', sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 100%; max-width: 100%; height: 100%;
+        background: var(--bg-burgundy-dark);
+        font-family: var(--font-body);
+        color: var(--text-light);
+        overflow: hidden;
+      }
+      .page {
+        width: 100%; min-height: 100vh;
+        display: flex; flex-direction: column;
+        justify-content: center; align-items: center;
+        position: relative;
+        background-color: var(--bg-burgundy-dark);
+        background-image:
+          radial-gradient(circle at 18% 18%, rgba(255, 227, 210, 0.16), transparent 18%),
+          radial-gradient(circle at 82% 20%, rgba(232, 183, 150, 0.12), transparent 18%),
+          radial-gradient(circle at 40% 80%, rgba(255, 215, 188, 0.10), transparent 20%),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cg fill='none' stroke='%23e8b796' stroke-width='1.1' stroke-opacity='0.12'%3E%3Cpath d='M0,120 C35,60 85,85 120,70 C155,55 190,35 220,65'/%3E%3Cpath d='M0,50 C55,20 100,35 140,20 C175,5 210,20 220,60'/%3E%3Cpath d='M0,180 C50,210 110,150 155,155 C190,160 220,205 220,220'/%3E%3Cpath d='M30,20 C50,55 80,50 110,30 C140,10 175,30 200,45'/%3E%3C/g%3E%3C/svg%3E"),
+          linear-gradient(145deg, rgba(32, 6, 10, 0.95), rgba(12, 2, 4, 0.98));
+        background-size: auto, auto, auto, cover;
+        background-position: 6% 20%, 84% 18%, 40% 82%, center center;
+        background-blend-mode: screen, screen, screen, normal;
+        background-attachment: fixed;
+        animation: bg-shift 12s ease-in-out infinite alternate;
+      }
+      @keyframes bg-shift {
+        0% { background-position: 6% 20%, 84% 18%, 40% 82%, center center; }
+        100% { background-position: 10% 16%, 80% 22%, 44% 78%, center center; }
+      }
+
+      .page::before {
+        content: '';
+        position: absolute; inset: 0;
+        background:
+          radial-gradient(circle at 24% 24%, rgba(242, 194, 173, 0.14), transparent 18%),
+          radial-gradient(circle at 78% 32%, rgba(255, 238, 228, 0.08), transparent 18%),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480' viewBox='0 0 480 480'%3E%3Cg fill='none' stroke='%23f3d4c3' stroke-width='1.2' stroke-opacity='0.08'%3E%3Cpath d='M30,90 C90,40 145,70 190,50 C240,30 320,30 360,75 C400,120 420,180 350,210 C290,240 230,200 180,220 C135,238 80,260 40,210'/%3E%3Cpath d='M70,350 C110,300 180,310 220,290 C260,270 310,250 360,280 C410,310 420,360 380,390 C340,420 290,410 250,380 C210,350 160,340 120,360'/%3E%3C/g%3E%3C/svg%3E");
+        background-size: 140% 140%, 140% 140%, 100% 100%;
+        background-position: 20% 20%, 80% 24%, center center;
+        pointer-events: none;
+        animation: pattern-float 8s ease-in-out infinite alternate;
+      }
+      @keyframes pattern-float {
+        0% { background-position: 20% 20%, 80% 24%, center center; }
+        100% { background-position: 24% 16%, 76% 28%, center center; }
+      }
+
+      .page::after {
+        content: '';
+        position: absolute; inset: 0;
+        background-image:
+          radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.06), transparent 12%),
+          radial-gradient(circle at 82% 68%, rgba(255, 255, 255, 0.05), transparent 10%),
+          linear-gradient(180deg, rgba(255,255,255,0.05), transparent 40%, rgba(0,0,0,0.18));
+        opacity: 0.96;
+        filter: blur(0.8px);
+        pointer-events: none;
+        animation: film-flare 8s ease-in-out infinite alternate;
+      }
+      @keyframes film-flare {
+        0% { opacity: 0.92; transform: scale(1); }
+        30% { opacity: 1; transform: scale(1.04); }
+        60% { opacity: 0.84; transform: scale(1.01); }
+        100% { opacity: 0.92; transform: scale(1); }
+      }
+
+      .spotlight {
+        position: absolute; inset: 0;
+        pointer-events: none; z-index: 1;
+        filter: blur(22px); mix-blend-mode: screen;
+        opacity: 0.22;
+        animation: breathe 16s ease-in-out infinite alternate;
+      }
+      .spotlight-l {
+        background: radial-gradient(circle at 18% 38%, rgba(255, 245, 225, 0.38), transparent 24%);
+      }
+      .spotlight-r {
+        background: radial-gradient(circle at 72% 26%, rgba(255, 238, 200, 0.34), transparent 24%);
+        animation-delay: -4s;
+      }
+      @keyframes breathe {
+        0% { opacity: 0.18; transform: scale(1); }
+        50% { opacity: 0.24; transform: scale(1.05); }
+        100% { opacity: 0.18; transform: scale(1); }
+      }
+
+      .frame {
+        position: absolute;
+        top: 30px; bottom: 30px; left: 30px; right: 30px;
+        border: 1px solid var(--accent-peach);
+        pointer-events: none; z-index: 2;
+        opacity: 0;
+        animation: fade-in 1.5s ease-out 0.5s forwards;
+      }
+      .frame::before {
+        content: '';
+        position: absolute;
+        top: 5px; bottom: 5px; left: 5px; right: 5px;
+        border: 1px dashed var(--accent-peach);
+        opacity: 0.4;
+      }
+      .ornament {
+        position: absolute; width: 80px; height: 80px;
+        color: var(--accent-peach);
+        opacity: 0;
+        animation: fade-in 1.5s ease-out 0.7s forwards;
+      }
+      .ornament-tl { top: -6px; left: -6px; }
+      .ornament-tr { top: -6px; right: -6px; transform: scaleX(-1); }
+      .ornament-bl { bottom: -6px; left: -6px; transform: scaleY(-1); }
+      .ornament-br { bottom: -6px; right: -6px; transform: scale(-1); }
+
+      @keyframes fade-in {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+
+      .content {
+        position: relative; z-index: 3;
+        display: flex; flex-direction: column;
+        align-items: center; text-align: center;
+        padding: 2rem;
+      }
+
+      .brand {
+        font-family: var(--font-script);
+        font-size: 7rem;
+        color: var(--accent-peach-light);
+        line-height: 0.8;
+        margin-bottom: 0.3rem;
+        opacity: 0;
+        animation: logo-in 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+        text-shadow: 0 0 20px rgba(254, 245, 239, 0.25);
+      }
+      @keyframes logo-in {
+        0% { opacity: 0; transform: scale(0.55) rotate(-18deg); }
+        60% { opacity: 1; transform: scale(1.08) rotate(6deg); }
+        100% { opacity: 1; transform: scale(1) rotate(0deg); }
+      }
+
+      .error-code {
+        font-family: 'Cinzel', serif;
+        font-size: 8rem;
+        font-weight: 700;
+        color: var(--accent-peach);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        opacity: 0;
+        animation: title-in 2s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards;
+        text-shadow: 0 0 30px rgba(232, 183, 150, 0.3);
+      }
+      @keyframes title-in {
+        0% { opacity: 0; transform: translateY(28px) scale(0.96) skewY(-2deg); }
+        100% { opacity: 1; transform: translateY(0) scale(1) skewY(0deg); }
+      }
+
+      .message {
+        font-family: var(--font-body);
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: rgba(254, 245, 239, 0.85);
+        max-width: 500px;
+        line-height: 1.7;
+        margin-bottom: 2.5rem;
+        opacity: 0;
+        animation: fade-in 1.2s ease-out 1.8s forwards;
+      }
+
+      .back-button {
+        padding: 14px 45px;
+        font-size: 1rem;
+        background: var(--accent-peach);
+        border: 1px solid var(--accent-peach);
+        color: #3a060a;
+        font-family: var(--font-sans);
+        font-weight: 600;
+        letter-spacing: 4px;
+        line-height: 1;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        outline: none;
+        cursor: pointer;
+        border-radius: 4px;
+        opacity: 0;
+        animation: fade-in 1.2s ease-out 2.5s forwards;
+        transition: all 0.3s ease;
+        text-decoration: none;
+      }
+      .back-button:hover {
+        background: transparent;
+        color: var(--accent-peach);
+        box-shadow: 0 6px 25px var(--accent-peach-glow);
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 768px) {
+        .brand { font-size: 5rem; }
+        .error-code { font-size: 5.5rem; }
+        .message { font-size: 1.1rem; padding: 0 1rem; }
+        .back-button { font-size: 0.9rem; padding: 12px 35px; }
+        .frame { top: 15px; bottom: 15px; left: 15px; right: 15px; }
+        .ornament { width: 50px; height: 50px; }
+      }
+      @media (max-width: 480px) {
+        .brand { font-size: 3.5rem; }
+        .error-code { font-size: 4rem; }
+        .message { font-size: 1rem; }
+        .back-button { font-size: 0.8rem; padding: 10px 28px; letter-spacing: 3px; }
+        .frame { top: 10px; bottom: 10px; left: 10px; right: 10px; }
+        .ornament { width: 40px; height: 40px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="spotlight spotlight-l"></div>
+      <div class="spotlight spotlight-r"></div>
+
+      <div class="frame">
+        <svg viewBox="0 0 100 100" class="ornament ornament-tl">
+          <path d="M 10 10 L 90 10 M 10 10 L 10 90 M 10 30 C 10 20 20 10 30 10 M 15 15 L 15 45 M 15 15 L 45 15 M 25 25 Q 35 15 45 25 Q 25 35 25 25" fill="none" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+        <svg viewBox="0 0 100 100" class="ornament ornament-tr">
+          <path d="M 10 10 L 90 10 M 10 10 L 10 90 M 10 30 C 10 20 20 10 30 10 M 15 15 L 15 45 M 15 15 L 45 15 M 25 25 Q 35 15 45 25 Q 25 35 25 25" fill="none" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+        <svg viewBox="0 0 100 100" class="ornament ornament-bl">
+          <path d="M 10 10 L 90 10 M 10 10 L 10 90 M 10 30 C 10 20 20 10 30 10 M 15 15 L 15 45 M 15 15 L 45 15 M 25 25 Q 35 15 45 25 Q 25 35 25 25" fill="none" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+        <svg viewBox="0 0 100 100" class="ornament ornament-br">
+          <path d="M 10 10 L 90 10 M 10 10 L 10 90 M 10 30 C 10 20 20 10 30 10 M 15 15 L 15 45 M 15 15 L 45 15 M 25 25 Q 35 15 45 25 Q 25 35 25 25" fill="none" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      </div>
+
+      <div class="content">
+        <div class="brand">Üzgünüz</div>
+        <div class="error-code">404</div>
+        <p class="message">
+          Aradığınız sayfa bulunamadı. Lütfen daha sonra tekrar deneyin ve bizi takipte kalın.
+        </p>
+        <a href="/" class="back-button">ANASAYFAYA DÖN</a>
+      </div>
+    </div>
+  </body>
+</html>
