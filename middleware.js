@@ -44,11 +44,12 @@ async function isAdmin(req) {
 }
 
 export default async function middleware(req) {
-  const pathname = new URL(req.url).pathname;
+  const url = new URL(req.url);
+  const pathname = url.pathname;
 
   // Giriş sayfası: dokunma
   if (pathname === LOGIN_PATH) {
-    return new Response(null, { status: 200, headers: { 'x-middleware-next': '1' } });
+    return next();
   }
 
   // Sadece yönetim alanı ve 404 (bilinmeyen yollar) korunur.
@@ -56,7 +57,7 @@ export default async function middleware(req) {
     pathname.startsWith('/ticketkontroladminamal/');
   const is404 = pathname === '/404.html';
   if (!isAdminArea && !is404) {
-    return new Response(null, { status: 200, headers: { 'x-middleware-next': '1' } });
+    return next();
   }
 
   let authorized = false;
@@ -70,9 +71,14 @@ export default async function middleware(req) {
 
   // Zaten hedefte: dokunma
   if (pathname === target) {
-    return new Response(null, { status: 200, headers: { 'x-middleware-next': '1' } });
+    return next();
   }
 
-  const dest = new URL(target, req.url).toString();
-  return new Response(null, { status: 307, headers: { Location: dest } });
+  const dest = new URL(target, url.origin);
+  return Response.redirect(dest.toString(), 302);
+}
+
+// Middleware'den sonra statik dosyaya devam et
+function next() {
+  return new Response(null, { status: 200, headers: { 'x-middleware-next': '1' } });
 }
