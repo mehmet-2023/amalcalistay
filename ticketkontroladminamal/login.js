@@ -25,11 +25,25 @@
     return 'panel';
   }
 
+  // Sayfa yenilenince addan .html'i temizle (temiz URL)
+  if (window.location.pathname.indexOf('.html') !== -1) {
+    try {
+      var cleanPath = window.location.pathname.replace(/\.html$/, '');
+      window.history.replaceState(null, '', cleanPath + window.location.search + window.location.hash);
+    } catch (e) {}
+  }
+
   // Zaten giriş yapılmışsa doğrudan panele yönlendir
   fetch('/api/auth/verify', { credentials: 'include', cache: 'no-store' })
     .then(function (r) { return r.ok ? r.json() : { ok: false }; })
     .then(function (d) {
-      if (d && d.ok) window.location.replace(nextTarget());
+      if (d && d.ok) {
+        var first = !sessionStorage.getItem('amal_redirected');
+        if (first) {
+          sessionStorage.setItem('amal_redirected', '1');
+          window.location.replace(nextTarget());
+        }
+      }
     })
     .catch(function () {});
 
@@ -61,6 +75,7 @@
       .then(function (result) {
         if (result.status === 200 && result.data.ok) {
           passInput.value = '';
+          sessionStorage.setItem('amal_redirected', '1');
           window.location.replace(nextTarget());
           return;
         }
