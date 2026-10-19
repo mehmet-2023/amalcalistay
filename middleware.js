@@ -5,7 +5,7 @@
 import { jwtVerify } from 'jose';
 
 export const config = {
-  matcher: ['/', '/404.html', '/ticketkontroladminamal/:path*']
+  matcher: ['/((?!_next|api|.*\\..*).*)', '/404.html']
 };
 
 const LOGIN_PATH = '/ticketkontroladminamal/amalbest';
@@ -48,6 +48,14 @@ export default async function middleware(req) {
 
   // Giriş sayfası: dokunma
   if (pathname === LOGIN_PATH) {
+    return new Response(null, { status: 200, headers: { 'x-middleware-next': '1' } });
+  }
+
+  // Sadece yönetim alanı ve 404 (bilinmeyen yollar) korunur.
+  const isAdminArea = pathname === '/ticketkontroladminamal' ||
+    pathname.startsWith('/ticketkontroladminamal/');
+  const is404 = pathname === '/404.html';
+  if (!isAdminArea && !is404) {
     return new Response(null, { status: 200, headers: { 'x-middleware-next': '1' } });
   }
 
