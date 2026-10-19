@@ -12,6 +12,7 @@
   var listEl = document.getElementById('user-list');
   var countEl = document.getElementById('user-count');
   var refreshBtn = document.getElementById('refresh-btn');
+  var bulkQrBtn = document.getElementById('bulk-qr-btn');
 
   var writeWarning = document.getElementById('write-warning');
   var pageError = document.getElementById('page-error');
@@ -208,6 +209,37 @@
     qrBackdrop.classList.remove('is-hidden');
   }
 
+  /* ---- Toplu QR → Excel (her satır: isim + QR resmi) ---- */
+  function downloadBulkQr() {
+    if (!state.users.length) { toast('Kullanıcı yok', 'err'); return; }
+    if (bulkQrBtn.disabled) return;
+
+    bulkQrBtn.disabled = true;
+    var label = bulkQrBtn.textContent;
+    bulkQrBtn.textContent = 'Hazırlanıyor...';
+
+    api('/api/qr-bulk', { method: 'POST' })
+      .then(function (r) {
+        if (r.status === 401) { window.location.replace('../'); return; }
+        if (r.status !== 200 || !r.data.ok || !r.data.dataUrl) {
+          toast((r.data && r.data.error) || 'Excel oluşturulamadı', 'err');
+          return;
+        }
+        var a = document.createElement('a');
+        a.href = r.data.dataUrl;
+        a.download = r.data.filename || 'amal-qr-kodlari.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        toast(state.users.length + ' kişilik Excel indirildi', 'ok');
+      })
+      .catch(function () { toast('Bağlantı hatası', 'err'); })
+      .then(function () {
+        bulkQrBtn.disabled = false;
+        bulkQrBtn.textContent = label;
+      });
+  }
+
   createForm.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!state.writeConfigured) { toast('Yazma yapılandırması eksik', 'err'); return; }
@@ -249,6 +281,7 @@
   });
 
   refreshBtn.addEventListener('click', loadUsers);
+  if (bulkQrBtn) bulkQrBtn.addEventListener('click', downloadBulkQr);
   qrClose.addEventListener('click', function () { qrBackdrop.classList.add('is-hidden'); });
   qrBackdrop.addEventListener('click', function (e) {
     if (e.target === qrBackdrop) qrBackdrop.classList.add('is-hidden');

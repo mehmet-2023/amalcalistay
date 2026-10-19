@@ -91,6 +91,12 @@
   margin: 0;
 }
 
+.list-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .user-list {
   display: flex;
   flex-direction: column;
