@@ -41,7 +41,18 @@ export default requireAdmin(async function handler(req, res) {
       if (typeof name === 'string' && name.trim()) user.name = name.trim();
       if (typeof komite === 'string') user.komite = komite.trim();
       if (Array.isArray(meals)) user.meals = normalizeMeals(meals);
-      if (Array.isArray(taken)) user.taken = normalizeMeals(taken);
+      if (Array.isArray(taken)) {
+        const prev = normalizeMeals(user.taken);
+        const next = normalizeMeals(taken);
+        const at = Array.isArray(user.takenAt) ? user.takenAt.slice() : [null, null];
+        const nowIso = new Date().toISOString();
+        for (let i = 0; i < 2; i++) {
+          if (next[i] && !prev[i]) at[i] = nowIso;
+          if (!next[i]) at[i] = null;
+        }
+        user.taken = next;
+        user.takenAt = at;
+      }
       user.updatedAt = new Date().toISOString();
 
       await upsertUser(user);

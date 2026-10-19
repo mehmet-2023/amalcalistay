@@ -4,7 +4,7 @@
   'use strict';
 
   var script = document.querySelector('script[src*="guard.js"]');
-  var unauthTarget = (script && script.getAttribute('data-unauth')) || '../index.html';
+  var unauthTarget = (script && script.getAttribute('data-unauth')) || '../';
 
   var loader = document.createElement('div');
   loader.className = 'hidden-loader';
@@ -41,7 +41,7 @@
       btn.disabled = true;
       fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
         .catch(function () {})
-        .then(function () { window.location.replace('amalbest.html'); });
+        .then(function () { window.location.replace('amalbest'); });
     });
     window.AMAL_GUARD_READY.then(function (r) {
       if (r && r.ok) document.body.appendChild(btn);

@@ -1,6 +1,6 @@
 // api/scan.js — QR kodunu çözer, kişiyi ve yemek durumunu döndürür
 import { requireAdmin } from './_lib/auth.js';
-import { verifyQrText, normalizeMeals, MEAL_LABELS } from './_lib/qr.js';
+import { verifyQrText, normalizeMeals, availableMeals, nextLockUntil, MEAL_LABELS } from './_lib/qr.js';
 import { getUser, upsertUser, isWriteConfigured } from './_lib/store.js';
 
 export default requireAdmin(async function handler(req, res) {
@@ -25,6 +25,7 @@ export default requireAdmin(async function handler(req, res) {
         komite: payload.k || '',
         meals: normalizeMeals(payload.m),
         taken: [false, false],
+        takenAt: [null, null],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -33,9 +34,14 @@ export default requireAdmin(async function handler(req, res) {
       }
     }
 
+    const now = Date.now();
     const taken = normalizeMeals(user.taken);
     const meals = normalizeMeals(user.meals);
-    const pending = meals.some((entitled, i) => entitled && !taken[i]);
+    const available = availableMeals(user, now);
+    const lockUntil = nextLockUntil(user, now);
+    const anyEntitled = meals.some(Boolean);
+    const pending = available.length > 0;
+    const status = pending ? 'pending' : lockUntil ? 'locked' : 'done';
 
     return res.status(200).json({
       ok: true,
@@ -47,7 +53,11 @@ export default requireAdmin(async function handler(req, res) {
         taken
       },
       mealLabels: MEAL_LABELS,
-      status: pending ? 'pending' : 'done'
+      available,
+      nextIndex: available.length ? available[0] : -1,
+      lockUntil,
+      anyEntitled,
+      status
     });
   } catch (err) {
     console.error(err);

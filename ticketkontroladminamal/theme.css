@@ -171,6 +171,12 @@ a {
   color: var(--text-dark);
 }
 
+/* Tarama panelinde çıkış butonu gizli (popup kapatma butonu kullanılır) */
+.scan-page ~ .logout-fab,
+body:has(.scan-page) .logout-fab {
+  display: none;
+}
+
 /* Genel hata bandı */
 .notice {
   margin: 0 0 16px;

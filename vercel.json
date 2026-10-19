@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/ticketkontroladminamal/:name([a-zA-Z0-9_-]+)", "destination": "/ticketkontroladminamal/:name.html" }
+  ],
   "headers": [
     {
       "source": "/ticketkontroladminamal/(.*)",

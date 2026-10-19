@@ -69,7 +69,7 @@
 
     api('/api/users', { method: 'GET' })
       .then(function (r) {
-        if (r.status === 401) { window.location.replace('../index.html'); return; }
+        if (r.status === 401) { window.location.replace('../'); return; }
         if (r.status !== 200 || !r.data.ok) {
           showError((r.data && r.data.error) || 'Kullanıcılar yüklenemedi');
           listEl.innerHTML = '';
@@ -172,7 +172,7 @@
   function patchUser(id, body) {
     api('/api/users/' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify(body) })
       .then(function (r) {
-        if (r.status === 401) { window.location.replace('../index.html'); return; }
+        if (r.status === 401) { window.location.replace('../'); return; }
         if (r.status === 200 && r.data.ok) {
           var idx = state.users.findIndex(function (u) { return u.id === id; });
           if (idx !== -1) state.users[idx] = r.data.user;
@@ -189,7 +189,7 @@
     if (!window.confirm('"' + user.name + '" silinsin mi?')) return;
     api('/api/users/' + encodeURIComponent(user.id), { method: 'DELETE' })
       .then(function (r) {
-        if (r.status === 401) { window.location.replace('../index.html'); return; }
+        if (r.status === 401) { window.location.replace('../'); return; }
         if (r.status === 200 && r.data.ok) {
           state.users = state.users.filter(function (u) { return u.id !== user.id; });
           render();
@@ -229,7 +229,7 @@
       .then(function (r) {
         createBtn.disabled = false;
         createBtn.textContent = 'Kullanıcı Ekle';
-        if (r.status === 401) { window.location.replace('../index.html'); return; }
+        if (r.status === 401) { window.location.replace('../'); return; }
         if (r.status === 201 && r.data.ok) {
           state.users.push(r.data.user);
           state.users.sort(function (a, b) { return a.name.localeCompare(b.name, 'tr'); });

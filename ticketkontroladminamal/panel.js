@@ -16,6 +16,7 @@
   var mealArea = document.getElementById('meal-area');
   var sheetStatus = document.getElementById('sheet-status');
   var confirmEl = document.getElementById('confirm');
+  var sheetCloseX = document.getElementById('sheet-close-x');
 
   var offCanvas = document.createElement('canvas');
   var offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
@@ -70,8 +71,12 @@
     octx.clearRect(0, 0, cssW, cssH);
   }
 
+  // Yeşil: şu an verilebilecek öğün var; kırmızı: şu an öğün yok (aldı veya kilitli).
   function isPending(result) {
-    if (!result || !result.user) return false;
+    if (!result) return false;
+    if (Array.isArray(result.available)) return result.available.length > 0;
+    if (result.status) return result.status === 'pending';
+    if (!result.user) return false;
     var meals = result.user.meals;
     var taken = result.user.taken;
     return meals.some(function (entitled, i) { return entitled && !taken[i]; });
@@ -208,7 +213,7 @@
             openSheet(lastResult);
           }
         } else if (r.status === 401) {
-          window.location.replace('../index.html');
+          window.location.replace('../');
         } else {
           toast((r.data && r.data.error) || 'QR okunamadı', 'err');
         }
@@ -239,71 +244,94 @@
     lastBox = null;
   }
 
-  // Sıradaki alınmamış öğünü göster (öğün 1 alınmışsa öğün 2).
+  function formatRemaining(iso) {
+    var ms = Date.parse(iso) - Date.now();
+    if (!isFinite(ms) || ms <= 0) return 'az sonra';
+    var totalMin = Math.ceil(ms / 60000);
+    var h = Math.floor(totalMin / 60);
+    var m = totalMin % 60;
+    if (h > 0) return h + ' saat ' + (m > 0 ? m + ' dakika' : '');
+    return m + ' dakika';
+  }
+
+  // Sıradaki müsait öğünü göster; 3 saat kilitliyse bekleme bilgisi ver.
   function renderNext(result) {
     var user = result.user;
     var labels = result.mealLabels || ['Öğle Yemeği 1', 'Öğle Yemeği 2'];
     mealArea.innerHTML = '';
 
-    var nextIndex = -1;
-    for (var i = 0; i < user.meals.length; i++) {
-      if (user.meals[i] && !user.taken[i]) { nextIndex = i; break; }
-    }
-
-    var anyEntitled = user.meals.some(function (m) { return m; });
+    var available = Array.isArray(result.available) ? result.available : [];
+    var nextIndex = available.length ? available[0] : -1;
+    var anyEntitled = Array.isArray(result.anyEntitled)
+      ? result.anyEntitled
+      : user.meals.some(function (m) { return m; });
 
     if (nextIndex !== -1) {
       var row = document.createElement('div');
       row.className = 'meal-row next';
 
-      var left = document.createElement('div');
       var label = document.createElement('span');
       label.className = 'meal-label';
       label.textContent = labels[nextIndex] || ('Öğün ' + (nextIndex + 1));
       var state = document.createElement('span');
       state.className = 'meal-state state-pending';
       state.textContent = 'Alınmadı';
-      left.appendChild(label);
-      left.appendChild(state);
+      row.appendChild(label);
+      row.appendChild(state);
+      mealArea.appendChild(row);
 
       var btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'btn small toggle-btn';
-      btn.textContent = 'Alındı İşaretle';
+      btn.className = 'btn big-approve';
+      btn.textContent = 'YEMEĞİ ONAYLA';
       btn.addEventListener('click', function () {
         markMeal(user.id, nextIndex, btn);
       });
-
-      row.appendChild(left);
-      row.appendChild(btn);
-      mealArea.appendChild(row);
+      mealArea.appendChild(btn);
+    } else if (result.lockUntil) {
+      var lock = document.createElement('div');
+      lock.className = 'notice warn center';
+      lock.textContent = '2. öğün kilitli: ' + formatRemaining(result.lockUntil) + ' sonra açılacak.';
+      mealArea.appendChild(lock);
+      mealArea.appendChild(closeButton());
+    } else if (anyEntitled) {
+      var done = document.createElement('div');
+      done.className = 'notice warn center';
+      done.textContent = 'Bu kişi tüm yemeklerini aldı.';
+      mealArea.appendChild(done);
+      mealArea.appendChild(closeButton());
     } else {
-      var none = document.createElement('div');
-      none.className = 'notice warn center';
-      none.textContent = anyEntitled
-        ? 'Bu kişi tüm yemeklerini aldı.'
-        : 'Bu kişinin tanımlı yemek hakkı yok.';
-      mealArea.appendChild(none);
-
-      var actions = document.createElement('div');
-      actions.className = 'sheet-actions';
-      var closeBtn = document.createElement('button');
-      closeBtn.type = 'button';
-      closeBtn.className = 'btn ghost small';
-      closeBtn.textContent = 'Kapat';
-      closeBtn.addEventListener('click', closeSheet);
-      actions.appendChild(closeBtn);
-      mealArea.appendChild(actions);
+      var noRight = document.createElement('div');
+      noRight.className = 'notice warn center';
+      noRight.textContent = 'Bu kişinin tanımlı yemek hakkı yok.';
+      mealArea.appendChild(noRight);
+      mealArea.appendChild(closeButton());
     }
 
-    var pending = nextIndex !== -1;
-    sheetStatus.className = 'sheet-status ' + (pending ? 'pending' : 'done');
-    sheetStatus.textContent = pending ? 'Yemek hakkı bekliyor' : 'Yemek hakkı kalmadı';
+    var status = result.status || (nextIndex !== -1 ? 'pending' : 'done');
+    sheetStatus.className = 'sheet-status ' + (status === 'pending' ? 'pending' : 'done');
+    sheetStatus.textContent = status === 'pending'
+      ? 'Yemek hakkı bekliyor'
+      : status === 'locked'
+        ? 'Öğün 2 kilitli'
+        : 'Yemek hakkı kalmadı';
+  }
+
+  function closeButton() {
+    var actions = document.createElement('div');
+    actions.className = 'sheet-actions';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn ghost small';
+    btn.textContent = 'Kapat';
+    btn.addEventListener('click', closeSheet);
+    actions.appendChild(btn);
+    return actions;
   }
 
   function markMeal(id, index, btn) {
     btn.disabled = true;
-    btn.textContent = 'İşaretleniyor...';
+    btn.textContent = 'ONAYLANIYOR...';
     fetch('/api/mark', {
       method: 'POST',
       credentials: 'include',
@@ -322,16 +350,16 @@
           confirmEl.classList.add('is-visible');
           setTimeout(closeSheet, 1150);
         } else if (r.status === 401) {
-          window.location.replace('../index.html');
+          window.location.replace('../');
         } else {
           btn.disabled = false;
-          btn.textContent = 'Alındı İşaretle';
+          btn.textContent = 'YEMEĞİ ONAYLA';
           toast((r.data && r.data.error) || 'İşaretlenemedi', 'err');
         }
       })
       .catch(function () {
         btn.disabled = false;
-        btn.textContent = 'Alındı İşaretle';
+        btn.textContent = 'YEMEĞİ ONAYLA';
         toast('Bağlantı hatası', 'err');
       });
   }
@@ -372,6 +400,7 @@
   }
 
   /* ---- Olaylar ---- */
+  sheetCloseX.addEventListener('click', closeSheet);
   retryCam.addEventListener('click', startCamera);
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', function () {

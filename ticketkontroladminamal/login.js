@@ -21,8 +21,8 @@
   function nextTarget() {
     var params = new URLSearchParams(window.location.search);
     var next = params.get('next');
-    if (next && /^[a-zA-Z0-9._-]+\.html$/.test(next)) return next;
-    return 'panel.html';
+    if (next && /^[a-zA-Z0-9_-]+(\.html)?$/.test(next)) return next;
+    return 'panel';
   }
 
   // Zaten giriş yapılmışsa doğrudan panele yönlendir

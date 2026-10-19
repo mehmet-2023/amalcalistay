@@ -53,3 +53,49 @@ export function normalizeMeals(value) {
   const arr = Array.isArray(value) ? value : [];
   return [Boolean(arr[0]), Boolean(arr[1])];
 }
+
+export function normalizeTakenAt(value) {
+  const arr = Array.isArray(value) ? value : [];
+  return [arr[0] || null, arr[1] || null];
+}
+
+/** 1. öğün alındıktan sonra 2. öğün için geçmesi gereken süre (3 saat). */
+export const MEAL2_MIN_DELAY_MS = 3 * 60 * 60 * 1000;
+
+/**
+ * Şu an işaretlenebilir öğünlerin indeksleri (3 saat kuralı dâhil).
+ * 2. öğün, yalnızca 1. öğün alındıktan ve 3 saat geçtikten sonra açılır.
+ */
+export function availableMeals(user, now = Date.now()) {
+  const meals = normalizeMeals(user.meals);
+  const taken = normalizeMeals(user.taken);
+  const takenAt = normalizeTakenAt(user.takenAt);
+  const out = [];
+  for (let i = 0; i < meals.length; i++) {
+    if (!meals[i] || taken[i]) continue;
+    if (i === 1 && meals[0]) {
+      if (!taken[0]) continue; // önce 1. öğün alınmalı
+      const t = Date.parse(takenAt[0] || '');
+      // Zaman damgası yoksa (eski veri) kilidi uygulama; varsa 3 saati bekle
+      if (Number.isFinite(t) && now - t < MEAL2_MIN_DELAY_MS) continue;
+    }
+    out.push(i);
+  }
+  return out;
+}
+
+/**
+ * Sıradaki öğün zamansal kilitliyse açılma anını (ISO) döndürür, değilse null.
+ */
+export function nextLockUntil(user, now = Date.now()) {
+  const meals = normalizeMeals(user.meals);
+  const taken = normalizeMeals(user.taken);
+  const takenAt = normalizeTakenAt(user.takenAt);
+  if (!meals[1] || taken[1]) return null;
+  if (!meals[0]) return null;   // 1. öğün yoksa kilit yok
+  if (!taken[0]) return null;   // sıra henüz 1. öğünde
+  const t = Date.parse(takenAt[0] || '');
+  if (!Number.isFinite(t)) return null;
+  const unlock = t + MEAL2_MIN_DELAY_MS;
+  return now < unlock ? new Date(unlock).toISOString() : null;
+}
