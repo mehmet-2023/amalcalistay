@@ -13,6 +13,14 @@ const PANEL_PATH = '/ticketkontroladminamal/panel';
 const COOKIE_NAME = 'amal_admin_token';
 const FALLBACK_SECRET = 'amalcalistay-default-secret-change-in-prod';
 
+// Gerçek (var olan) yönetim sayfaları: middleware yönlendirme yapmaz,
+// kendi client-side guard'ları devrededir.
+const REAL_PAGES = [
+  LOGIN_PATH,
+  PANEL_PATH,
+  '/ticketkontroladminamal/users'
+];
+
 function readCookie(header, name) {
   const parts = String(header || '').split(';');
   for (let i = 0; i < parts.length; i++) {
@@ -45,17 +53,18 @@ async function isAdmin(req) {
 
 export default async function middleware(req) {
   const url = new URL(req.url);
-  const pathname = url.pathname;
+  const pathname = url.pathname.replace(/\.html$/, '');
 
-  // Giriş sayfası: dokunma
-  if (pathname === LOGIN_PATH) {
+  // Var olan gerçek sayfalar (panel, amalbest, users): dokunma.
+  // Kendi guard'ları oturum kontrolünü yapar.
+  if (REAL_PAGES.indexOf(pathname) !== -1) {
     return next();
   }
 
-  // Sadece yönetim alanı ve 404 (bilinmeyen yollar) korunur.
+  // Sadece yönetim alanı ve bilinmeyen (404) yollar yönlendirilir.
   const isAdminArea = pathname === '/ticketkontroladminamal' ||
     pathname.startsWith('/ticketkontroladminamal/');
-  const is404 = pathname === '/404.html';
+  const is404 = pathname === '/404.html' || pathname === '/404';
   if (!isAdminArea && !is404) {
     return next();
   }
@@ -68,12 +77,6 @@ export default async function middleware(req) {
   }
 
   const target = authorized ? PANEL_PATH : LOGIN_PATH;
-
-  // Zaten hedefte: dokunma
-  if (pathname === target) {
-    return next();
-  }
-
   const dest = new URL(target, url.origin);
   return Response.redirect(dest.toString(), 302);
 }
