@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <title>Giriş | AMAL Yönetim</title>
+  <link rel="icon" href="../favicon.ico" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body class="login-page">
+  <form id="login-form" class="login-card" autocomplete="off">
+    <div class="brandline">AMAL <span>Çalıştay</span></div>
+    <div class="login-lock" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="10.5" width="16" height="10" rx="2"></rect>
+        <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path>
+        <circle cx="12" cy="15.5" r="1.4" fill="currentColor" stroke="none"></circle>
+      </svg>
+    </div>
+    <h1>Yönetici Girişi</h1>
+    <p class="login-sub">Yetkili erişimi</p>
+
+    <div class="field">
+      <label for="username">Kullanıcı Adı</label>
+      <input id="username" name="username" type="text" autocomplete="off"
+             autocapitalize="off" autocorrect="off" spellcheck="false" required />
+    </div>
+    <div class="field">
+      <label for="password">Şifre</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required />
+    </div>
+
+    <button class="btn" type="submit" id="login-submit">Giriş Yap</button>
+    <div id="login-error" class="notice err center is-hidden" role="alert"></div>
+  </form>
+
+  <script src="login.js" defer></script>
+</body>
+</html>

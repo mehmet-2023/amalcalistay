@@ -1,0 +1,28 @@
+{
+  "name": "amalcalistay",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mehmet-2023/amalcalistay.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/mehmet-2023/amalcalistay/issues"
+  },
+  "homepage": "https://github.com/mehmet-2023/amalcalistay#readme",
+  "dependencies": {
+    "@vercel/global-config": "^1.5.1",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.12",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4"
+  }
+}

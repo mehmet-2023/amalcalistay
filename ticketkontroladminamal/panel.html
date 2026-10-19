@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="theme-color" content="#200204" />
+  <title>QR Tarama | AMAL Yönetim</title>
+  <link rel="icon" href="../favicon.ico" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="panel.css" />
+</head>
+<body>
+  <div class="scan-page">
+    <video id="camera" playsinline muted autoplay></video>
+    <canvas id="overlay"></canvas>
+
+    <div class="scan-topbar">
+      <div class="brandline">AMAL <span>Çalıştay</span></div>
+      <div class="scan-hint">QR kodu çerçeveye getirin</div>
+    </div>
+
+    <div class="scan-bottom">
+      <button class="shutter" id="shutter" type="button" aria-label="Tara"></button>
+    </div>
+
+    <div class="cam-error is-hidden" id="cam-error">
+      <div id="cam-error-msg">Kamera başlatılamadı.</div>
+      <button class="btn small" id="retry-cam" type="button">Tekrar Dene</button>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <div class="sheet-backdrop is-hidden" id="sheet-backdrop">
+    <div class="sheet" id="sheet">
+      <div class="brandline">Kişi Kartı</div>
+      <div class="person-name" id="person-name">—</div>
+      <div class="person-komite" id="person-komite">—</div>
+      <div id="meal-list"></div>
+      <div class="sheet-status" id="sheet-status"></div>
+      <div class="sheet-actions">
+        <button class="btn ghost small" id="sheet-close" type="button">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="jsqr.js" defer></script>
+  <script src="guard.js" data-unauth="../index.html" defer></script>
+  <script src="panel.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <title>Kullanıcı Yönetimi | AMAL</title>
+  <link rel="icon" href="../favicon.ico" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="users.css" />
+</head>
+<body>
+  <div class="users-page">
+    <header class="users-head">
+      <div class="brandline">AMAL <span>Çalıştay</span></div>
+      <h1>Kullanıcı Yönetimi</h1>
+      <p class="users-sub">Kullanıcı oluştur, QR kodlarını ve yemek durumlarını düzenle</p>
+    </header>
+
+    <div id="write-warning" class="notice warn is-hidden">
+      Yazma yapılandırması eksik: <strong>VERCEL_TOKEN</strong> ortam değişkenini ekleyin. Şu an yalnızca listeleme çalışır.
+    </div>
+    <div id="page-error" class="notice err is-hidden"></div>
+
+    <section class="panel-box">
+      <h2>Yeni Kullanıcı</h2>
+      <form id="create-form" class="user-form" autocomplete="off">
+        <div class="field">
+          <label for="c-name">İsim</label>
+          <input id="c-name" type="text" required />
+        </div>
+        <div class="field">
+          <label for="c-komite">Komite</label>
+          <input id="c-komite" type="text" />
+        </div>
+        <div class="field check-field">
+          <label class="check">
+            <input id="c-meal1" type="checkbox" checked />
+            <span>Öğle Yemeği 1 hakkı</span>
+          </label>
+          <label class="check">
+            <input id="c-meal2" type="checkbox" checked />
+            <span>Öğle Yemeği 2 hakkı</span>
+          </label>
+        </div>
+        <button class="btn" type="submit" id="create-btn">Kullanıcı Ekle</button>
+      </form>
+    </section>
+
+    <section class="panel-box">
+      <div class="list-head">
+        <h2>Kullanıcılar (<span id="user-count">0</span>)</h2>
+        <button class="btn ghost small" type="button" id="refresh-btn">Yenile</button>
+      </div>
+      <div id="user-list" class="user-list"></div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop is-hidden" id="qr-backdrop">
+    <div class="modal">
+      <div class="brandline">QR KOD</div>
+      <div class="qr-name" id="qr-name">—</div>
+      <img id="qr-image" class="qr-image" alt="QR kod" />
+      <div class="modal-actions">
+        <button class="btn ghost small" type="button" id="qr-close">Kapat</button>
+        <a class="btn small" id="qr-open" href="#" target="_blank" rel="noopener">Yeni Sekmede Aç</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="guard.js" data-unauth="../index.html" defer></script>
+  <script src="users.js" defer></script>
+</body>
+</html>

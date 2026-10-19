@@ -1,0 +1,267 @@
+/* panel.css — QR tarama paneli (Pokemon Go tarzı) */
+.scan-page {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+  touch-action: none;
+}
+
+#camera {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.scan-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px calc(14px + env(safe-area-inset-top, 0px));
+  background: linear-gradient(180deg, rgba(32, 2, 4, 0.85), rgba(32, 2, 4, 0));
+}
+
+.scan-topbar .brandline {
+  font-size: 12px;
+  letter-spacing: 5px;
+}
+
+.scan-hint {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(254, 245, 239, 0.7);
+}
+
+.scan-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 16px calc(28px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(0deg, rgba(32, 2, 4, 0.9), rgba(32, 2, 4, 0));
+}
+
+.shutter {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: rgba(254, 245, 239, 0.15);
+  border: 3px solid var(--accent-peach);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.2s ease;
+}
+
+.shutter::after {
+  content: '';
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent-peach);
+  transition: transform 0.12s ease;
+}
+
+.shutter:active::after {
+  transform: scale(0.85);
+}
+
+.shutter:disabled {
+  opacity: 0.5;
+}
+
+/* Popup (kişi kartı) */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(6, 1, 2, 0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.sheet-backdrop.is-hidden {
+  display: none;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 420px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 26px 24px;
+  background: radial-gradient(circle at 50% 0%, #480b0f 0%, #200204 75%);
+  border: 1px solid rgba(232, 183, 150, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+.sheet .brandline {
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: var(--accent-peach);
+}
+
+.sheet .person-name {
+  margin: 14px 0 4px;
+  font-family: var(--font-serif);
+  font-size: 26px;
+  color: var(--text-light);
+}
+
+.sheet .person-komite {
+  margin: 0 0 20px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(232, 183, 150, 0.8);
+}
+
+.meal-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: rgba(12, 2, 4, 0.5);
+  border: 1px solid rgba(232, 183, 150, 0.2);
+  border-radius: 6px;
+}
+
+.meal-row .meal-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.meal-row .meal-state {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.meal-row .state-taken {
+  color: var(--danger-red);
+}
+
+.meal-row .state-pending {
+  color: var(--ok-green);
+}
+
+.sheet-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.sheet-status {
+  margin-top: 4px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.sheet-status.done {
+  color: var(--danger-red);
+}
+
+.sheet-status.pending {
+  color: var(--ok-green);
+}
+
+.toggle-btn {
+  min-width: 120px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 130px;
+  transform: translateX(-50%);
+  z-index: 50;
+  padding: 12px 20px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text-light);
+  background: rgba(32, 2, 4, 0.95);
+  border: 1px solid rgba(232, 183, 150, 0.4);
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.toast.is-visible {
+  opacity: 1;
+}
+
+.toast.err {
+  border-color: var(--danger-red);
+  color: #ffd6dd;
+}
+
+.toast.ok {
+  border-color: var(--ok-green);
+}
+
+.cam-error {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 30px;
+  text-align: center;
+  background: rgba(6, 1, 2, 0.92);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.cam-error.is-hidden {
+  display: none;
+}
