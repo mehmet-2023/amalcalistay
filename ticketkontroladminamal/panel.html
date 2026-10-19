@@ -21,7 +21,7 @@
     </div>
 
     <div class="scan-bottom">
-      <button class="shutter" id="shutter" type="button" aria-label="Tara"></button>
+      <div class="shutter" aria-hidden="true"><span class="shutter-ring"></span></div>
     </div>
 
     <div class="cam-error is-hidden" id="cam-error">
@@ -32,15 +32,18 @@
     <div class="toast" id="toast"></div>
   </div>
 
-  <div class="sheet-backdrop is-hidden" id="sheet-backdrop">
+  <div class="sheet-backdrop" id="sheet-backdrop">
     <div class="sheet" id="sheet">
       <div class="brandline">Kişi Kartı</div>
       <div class="person-name" id="person-name">—</div>
       <div class="person-komite" id="person-komite">—</div>
-      <div id="meal-list"></div>
+      <div id="meal-area"></div>
       <div class="sheet-status" id="sheet-status"></div>
-      <div class="sheet-actions">
-        <button class="btn ghost small" id="sheet-close" type="button">Kapat</button>
+      <div class="confirm" id="confirm" aria-hidden="true">
+        <div class="confirm-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <div class="confirm-text">Onaylandı</div>
       </div>
     </div>
   </div>

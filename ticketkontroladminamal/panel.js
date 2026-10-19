@@ -5,7 +5,6 @@
   var video = document.getElementById('camera');
   var overlay = document.getElementById('overlay');
   var octx = overlay.getContext('2d');
-  var shutter = document.getElementById('shutter');
   var toastEl = document.getElementById('toast');
   var camError = document.getElementById('cam-error');
   var camErrorMsg = document.getElementById('cam-error-msg');
@@ -14,9 +13,9 @@
   var sheetBackdrop = document.getElementById('sheet-backdrop');
   var personName = document.getElementById('person-name');
   var personKomite = document.getElementById('person-komite');
-  var mealList = document.getElementById('meal-list');
+  var mealArea = document.getElementById('meal-area');
   var sheetStatus = document.getElementById('sheet-status');
-  var sheetClose = document.getElementById('sheet-close');
+  var confirmEl = document.getElementById('confirm');
 
   var offCanvas = document.createElement('canvas');
   var offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
@@ -137,7 +136,7 @@
 
   function detectFrame() {
     if (!running || busy) return;
-    if (!sheetBackdrop.classList.contains('is-hidden')) return;
+    if (sheetBackdrop.classList.contains('is-open')) return;
     var now = performance.now();
     if (now - lastDetectTime < DETECT_INTERVAL) return;
     lastDetectTime = now;
@@ -225,12 +224,14 @@
     var user = result.user;
     personName.textContent = user.name || '—';
     personKomite.textContent = user.komite || 'Komite yok';
-    renderMeals(result);
-    sheetBackdrop.classList.remove('is-hidden');
+    confirmEl.classList.remove('is-visible');
+    renderNext(result);
+    sheetBackdrop.classList.add('is-open');
   }
 
   function closeSheet() {
-    sheetBackdrop.classList.add('is-hidden');
+    sheetBackdrop.classList.remove('is-open');
+    confirmEl.classList.remove('is-visible');
     clearOverlay();
     openedCode = null;
     currentCode = null;
@@ -238,60 +239,76 @@
     lastBox = null;
   }
 
-  function renderMeals(result) {
+  // Sıradaki alınmamış öğünü göster (öğün 1 alınmışsa öğün 2).
+  function renderNext(result) {
     var user = result.user;
     var labels = result.mealLabels || ['Öğle Yemeği 1', 'Öğle Yemeği 2'];
-    mealList.innerHTML = '';
+    mealArea.innerHTML = '';
 
-    var anyEntitled = false;
-    user.meals.forEach(function (entitled, i) {
-      if (!entitled) return;
-      anyEntitled = true;
+    var nextIndex = -1;
+    for (var i = 0; i < user.meals.length; i++) {
+      if (user.meals[i] && !user.taken[i]) { nextIndex = i; break; }
+    }
 
+    var anyEntitled = user.meals.some(function (m) { return m; });
+
+    if (nextIndex !== -1) {
       var row = document.createElement('div');
-      row.className = 'meal-row';
+      row.className = 'meal-row next';
 
       var left = document.createElement('div');
       var label = document.createElement('span');
       label.className = 'meal-label';
-      label.textContent = labels[i] || ('Öğün ' + (i + 1));
+      label.textContent = labels[nextIndex] || ('Öğün ' + (nextIndex + 1));
       var state = document.createElement('span');
-      state.className = 'meal-state ' + (user.taken[i] ? 'state-taken' : 'state-pending');
-      state.textContent = user.taken[i] ? 'Alındı' : 'Alınmadı';
+      state.className = 'meal-state state-pending';
+      state.textContent = 'Alınmadı';
       left.appendChild(label);
       left.appendChild(state);
 
       var btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'btn small toggle-btn ' + (user.taken[i] ? 'danger' : '');
-      btn.textContent = user.taken[i] ? 'Geri Al' : 'Alındı İşaretle';
+      btn.className = 'btn small toggle-btn';
+      btn.textContent = 'Alındı İşaretle';
       btn.addEventListener('click', function () {
-        markMeal(user.id, i, !user.taken[i]);
+        markMeal(user.id, nextIndex, btn);
       });
 
       row.appendChild(left);
       row.appendChild(btn);
-      mealList.appendChild(row);
-    });
-
-    if (!anyEntitled) {
+      mealArea.appendChild(row);
+    } else {
       var none = document.createElement('div');
       none.className = 'notice warn center';
-      none.textContent = 'Bu kişinin tanımlı yemek hakkı yok.';
-      mealList.appendChild(none);
+      none.textContent = anyEntitled
+        ? 'Bu kişi tüm yemeklerini aldı.'
+        : 'Bu kişinin tanımlı yemek hakkı yok.';
+      mealArea.appendChild(none);
+
+      var actions = document.createElement('div');
+      actions.className = 'sheet-actions';
+      var closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'btn ghost small';
+      closeBtn.textContent = 'Kapat';
+      closeBtn.addEventListener('click', closeSheet);
+      actions.appendChild(closeBtn);
+      mealArea.appendChild(actions);
     }
 
-    var pending = isPending(result);
+    var pending = nextIndex !== -1;
     sheetStatus.className = 'sheet-status ' + (pending ? 'pending' : 'done');
-    sheetStatus.textContent = pending ? 'Yemek hakkı bekliyor' : 'Tüm yemekler alındı';
+    sheetStatus.textContent = pending ? 'Yemek hakkı bekliyor' : 'Yemek hakkı kalmadı';
   }
 
-  function markMeal(id, index, value) {
+  function markMeal(id, index, btn) {
+    btn.disabled = true;
+    btn.textContent = 'İşaretleniyor...';
     fetch('/api/mark', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: id, index: index, value: value })
+      body: JSON.stringify({ id: id, index: index, value: true })
     })
       .then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (data) {
@@ -301,16 +318,20 @@
       .then(function (r) {
         if (r.status === 200 && r.data.ok) {
           lastResult = r.data;
-          if (navigator.vibrate) navigator.vibrate(20);
-          renderMeals(r.data);
-          toast(value ? 'Alındı olarak işaretlendi' : 'İşaret geri alındı', 'ok');
+          if (navigator.vibrate) navigator.vibrate(30);
+          confirmEl.classList.add('is-visible');
+          setTimeout(closeSheet, 1150);
         } else if (r.status === 401) {
           window.location.replace('../index.html');
         } else {
+          btn.disabled = false;
+          btn.textContent = 'Alındı İşaretle';
           toast((r.data && r.data.error) || 'İşaretlenemedi', 'err');
         }
       })
       .catch(function () {
+        btn.disabled = false;
+        btn.textContent = 'Alındı İşaretle';
         toast('Bağlantı hatası', 'err');
       });
   }
@@ -351,37 +372,6 @@
   }
 
   /* ---- Olaylar ---- */
-  shutter.addEventListener('click', function () {
-    if (busy) return;
-    if (currentCode) {
-      openedCode = currentCode;
-      if (lastResult) openSheet(lastResult);
-      return;
-    }
-    // Anlık kareyi tara
-    drawCover(offCtx, offCanvas.width, offCanvas.height);
-    var imageData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height);
-    var code = window.jsQR(imageData.data, offCanvas.width, offCanvas.height, { inversionAttempts: 'dontInvert' });
-    if (code && code.data) {
-      var factor = cssW / offCanvas.width;
-      var loc = code.location;
-      var pts = [
-        { x: loc.topLeftCorner.x * factor, y: loc.topLeftCorner.y * factor },
-        { x: loc.topRightCorner.x * factor, y: loc.topRightCorner.y * factor },
-        { x: loc.bottomRightCorner.x * factor, y: loc.bottomRightCorner.y * factor },
-        { x: loc.bottomLeftCorner.x * factor, y: loc.bottomLeftCorner.y * factor }
-      ];
-      lastBox = pts;
-      scanCode(code.data, pts);
-    } else {
-      toast('QR kod bulunamadı', 'err');
-    }
-  });
-
-  sheetClose.addEventListener('click', closeSheet);
-  sheetBackdrop.addEventListener('click', function (e) {
-    if (e.target === sheetBackdrop) closeSheet();
-  });
   retryCam.addEventListener('click', startCamera);
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', function () {

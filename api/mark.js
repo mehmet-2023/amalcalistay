@@ -9,7 +9,7 @@ export default requireAdmin(async function handler(req, res) {
   }
 
   if (!isWriteConfigured()) {
-    return res.status(500).json({ error: 'Yazma yapılandırması eksik (VERCEL_TOKEN)' });
+    return res.status(500).json({ error: 'Yazma yapılandırması eksik (GC_WRITE_TOKEN)' });
   }
 
   const { id, taken, index, value } = req.body || {};

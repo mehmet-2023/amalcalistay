@@ -65,16 +65,18 @@
 }
 
 .shutter {
+  position: relative;
   width: 78px;
   height: 78px;
   border-radius: 50%;
-  background: rgba(254, 245, 239, 0.15);
+  background: rgba(254, 245, 239, 0.12);
   border: 3px solid var(--accent-peach);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: transform 0.12s ease, background 0.2s ease;
+  pointer-events: none;
+  box-shadow: 0 0 22px var(--accent-peach-glow);
+  animation: shutter-pulse 2.4s ease-in-out infinite;
 }
 
 .shutter::after {
@@ -83,15 +85,25 @@
   height: 56px;
   border-radius: 50%;
   background: var(--accent-peach);
-  transition: transform 0.12s ease;
+  opacity: 0.85;
 }
 
-.shutter:active::after {
-  transform: scale(0.85);
+.shutter-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-peach);
+  animation: shutter-ring 2.4s ease-out infinite;
 }
 
-.shutter:disabled {
-  opacity: 0.5;
+@keyframes shutter-pulse {
+  0%, 100% { box-shadow: 0 0 18px var(--accent-peach-glow); }
+  50% { box-shadow: 0 0 30px var(--accent-peach-glow); }
+}
+
+@keyframes shutter-ring {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.35); opacity: 0; }
 }
 
 /* Popup (kişi kartı) */
@@ -106,13 +118,18 @@
   background: rgba(6, 1, 2, 0.72);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
 }
 
-.sheet-backdrop.is-hidden {
-  display: none;
+.sheet-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .sheet {
+  position: relative;
   width: 100%;
   max-width: 420px;
   max-height: 88vh;
@@ -123,6 +140,14 @@
   border-radius: 8px;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
   text-align: center;
+  transform: translateY(30px) scale(0.94);
+  opacity: 0;
+  transition: transform 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.25), opacity 0.3s ease;
+}
+
+.sheet-backdrop.is-open .sheet {
+  transform: none;
+  opacity: 1;
 }
 
 .sheet .brandline {
@@ -210,6 +235,94 @@
 
 .toggle-btn {
   min-width: 120px;
+}
+
+/* Sıradaki öğün kartı */
+.meal-row.next {
+  padding: 18px 16px;
+  margin-bottom: 6px;
+  background: linear-gradient(160deg, rgba(72, 11, 15, 0.75), rgba(12, 2, 4, 0.6));
+  border-color: rgba(232, 183, 150, 0.45);
+  animation: meal-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.meal-row.next .meal-label {
+  font-size: 14px;
+}
+
+.meal-row.next .meal-state {
+  margin-top: 5px;
+  font-size: 11px;
+}
+
+.meal-row.next .toggle-btn {
+  min-width: 150px;
+  padding: 14px 18px;
+  font-size: 12px;
+}
+
+@keyframes meal-in {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* Onay animasyonu */
+.confirm {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: radial-gradient(circle at 50% 45%, rgba(91, 189, 122, 0.25), rgba(32, 2, 4, 0.97) 72%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.confirm.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.confirm-check {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 3px solid var(--ok-green);
+  color: var(--ok-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 34px rgba(91, 189, 122, 0.55);
+}
+
+.confirm-check svg {
+  width: 46px;
+  height: 46px;
+}
+
+.confirm-text {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--ok-green);
+}
+
+.confirm.is-visible .confirm-check {
+  animation: pop-in 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.5) both;
+}
+
+.confirm.is-visible .confirm-text {
+  animation: pop-in 0.42s 0.08s cubic-bezier(0.2, 0.9, 0.3, 1.5) both;
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.4); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 /* Toast */

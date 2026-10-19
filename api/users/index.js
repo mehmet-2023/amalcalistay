@@ -32,7 +32,7 @@ export default requireAdmin(async function handler(req, res) {
 
     if (req.method === 'POST') {
       if (!isWriteConfigured()) {
-        return res.status(500).json({ error: 'Yazma yapılandırması eksik (VERCEL_TOKEN)' });
+        return res.status(500).json({ error: 'Yazma yapılandırması eksik (GC_WRITE_TOKEN)' });
       }
       const { name, komite, meals } = req.body || {};
       if (!name || !String(name).trim()) {

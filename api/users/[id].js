@@ -32,7 +32,7 @@ export default requireAdmin(async function handler(req, res) {
 
     if (req.method === 'PATCH') {
       if (!isWriteConfigured()) {
-        return res.status(500).json({ error: 'Yazma yapılandırması eksik (VERCEL_TOKEN)' });
+        return res.status(500).json({ error: 'Yazma yapılandırması eksik (GC_WRITE_TOKEN)' });
       }
       const user = await getUser(id);
       if (!user) return res.status(404).json({ error: 'Kullanıcı bulunamadı' });
@@ -50,7 +50,7 @@ export default requireAdmin(async function handler(req, res) {
 
     if (req.method === 'DELETE') {
       if (!isWriteConfigured()) {
-        return res.status(500).json({ error: 'Yazma yapılandırması eksik (VERCEL_TOKEN)' });
+        return res.status(500).json({ error: 'Yazma yapılandırması eksik (GC_WRITE_TOKEN)' });
       }
       await removeUser(id);
       return res.status(200).json({ ok: true });

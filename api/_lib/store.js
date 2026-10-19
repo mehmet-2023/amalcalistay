@@ -2,7 +2,9 @@
 import { getAll } from '@vercel/global-config';
 
 const GC_ID = process.env.GLOBAL_CONFIG_ID || process.env.VERCEL_GLOBAL_CONFIG_ID || 'ecfg_xqpj4vvklqjususnu3wkr2af11pv';
-const TOKEN = process.env.VERCEL_TOKEN;
+// NOT: Vercel, "VERCEL_" ile başlayan özel ortam değişkenlerini kabul etmez (rezerve prefix).
+// Bu yüzden öncelik GC_WRITE_TOKEN'da; geriye dönük uyumluluk için diğerleri de denenir.
+const TOKEN = process.env.GC_WRITE_TOKEN || process.env.VERCEL_API_TOKEN || process.env.VERCEL_TOKEN;
 const TEAM_ID = process.env.VERCEL_TEAM_ID;
 
 const USER_PREFIX = 'user_';
@@ -45,7 +47,7 @@ export async function getUser(id) {
  */
 export async function writeItems(items) {
   if (!TOKEN) {
-    throw new Error('VERCEL_TOKEN tanımlı değil; Global Config yazma yapılamıyor');
+    throw new Error('GC_WRITE_TOKEN tanımlı değil; Global Config yazma yapılamıyor');
   }
   const qs = TEAM_ID ? `?teamId=${encodeURIComponent(TEAM_ID)}` : '';
   const res = await fetch(`https://api.vercel.com/v1/edge-config/${encodeURIComponent(GC_ID)}/items${qs}`, {
