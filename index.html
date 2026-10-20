@@ -16,7 +16,7 @@
 
     <title>AMAL Değişim Çalıştayı 2026</title>
     <!--Start of Tawk.to Script-->
-   <!-- <script type="text/javascript">
+    <!-- <script type="text/javascript">
       var Tawk_API = Tawk_API || {},
         Tawk_LoadStart = new Date();
       (function () {
@@ -60,14 +60,16 @@
       }
       .initial-loader p {
         margin-top: 1.2rem;
-        font-family: 'Cormorant Garamond', serif;
+        font-family: "Cormorant Garamond", serif;
         font-size: 1rem;
         color: #e8b796;
         letter-spacing: 3px;
         text-transform: uppercase;
       }
       @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+          transform: rotate(360deg);
+        }
       }
       .sponsors-section {
         background: #1a0000;
@@ -490,17 +492,17 @@
               className: "teoloji",
               studyGuideLink: "https://amalcalistay.org/404.html",
             },
-            // {
-            //   name: "Kurtlar Vadisi - Kriz Komitesi",
-            //   shortDescription:
-            //     "Yeraltı dünyası ve jeopolitik kriz simülasyonu",
-            //   fullDescription:
-            //     "Kurtlar Vadisi - Kriz Komitesi, Türkiye'nin yakın siyasi ve mafyatik hafızasında derin izler bırakan kurgusal evreni temel alan bir kriz simülasyonudur. Katılımcılar, konsey güç dengelerini, istihbarat savaşlarını ve stratejik kriz anlarını yöneterek diplomatik ve operasyonel kararlar alırlar.",
-            //   image: "/komiteler/kurtlar_vadisi.jpg",
-            //   color: "rgba(20, 180, 50, 0.8)",
-            //   className: "kurtlar-vadisi",
-            //   studyGuideLink: "https://amalcalistay.org/404.html",
-            // },
+            {
+              name: "Kurtlar Vadisi - Kriz Komitesi",
+              shortDescription:
+                "Yeraltı dünyası ve jeopolitik kriz simülasyonu",
+              fullDescription:
+                "Kurtlar Vadisi - Kriz Komitesi, Türkiye'nin yakın siyasi ve mafyatik hafızasında derin izler bırakan kurgusal evreni temel alan bir kriz simülasyonudur. Katılımcılar, konsey güç dengelerini, istihbarat savaşlarını ve stratejik kriz anlarını yöneterek diplomatik ve operasyonel kararlar alırlar.",
+              image: "/komiteler/kurtlar_vadisi.jpg",
+              color: "rgba(20, 180, 50, 0.8)",
+              className: "kurtlar-vadisi",
+              studyGuideLink: "https://amalcalistay.org/404.html",
+            },
             {
               name: "Tarih Komitesi",
               shortDescription: "Geçmişin analizi ve geleceğin inşası",
@@ -603,42 +605,33 @@
 
         function Apply() {
           const applicationTypes = [
-  /*          {
-              type: "Akademi",
+            {
+              type: "Delege",
               color: "rgba(255, 1, 60, 0.8)",
               className: "delege",
               formLink: "https://forms.gle/LQMMjW382uycJibA8",
             },
             {
-              type: "İnsan Kaynakları",
-              color: "rgba(0, 123, 255, 0.8)",
-              className: "admin",
-              formLink: "https://forms.gle/8cj86HAkanWt6bMD8",
+              type: "Delegasyon",
+              color: "rgba(40, 167, 69, 0.8)",
+              className: "katilimci",
+              formLink: "https://forms.gle/2tKzEjyiKtJJhbXn8",
             },
             {
-              type: "Halkla İlişkiler",
+              type: "Press",
               color: "rgba(204, 204, 0, 0.8)",
               className: "press",
               formLink: "https://forms.gle/7Xd4jiENeqoNcDSy5",
             },
-            {
-              type: "Finans",
-              color: "rgba(40, 167, 69, 0.8)",
-              className: "katilimci",
-              formLink: "https://forms.gle/2tKzEjyiKtJJhbXn8",
-            },{
-              type: "Tasarım",
-              color: "rgba(245, 158, 11, 0.8)",
-              className: "tasarim",
-              formLink: "https://forms.gle/tinVVsSMg5mom6EZ9",
-            } */
           ];
 
           return (
             <section id="apply" className="section section-light">
               <h2>Başvur</h2>
               <p>
-                AMAL Değişim Çalıştayı etkinliğinde yer almak için başvurmayı unutmayın! Başvurularımız en yakın sürede açılacaktır, bizi takipte kalın.
+                AMAL Değişim Çalıştayı etkinliğinde yer almak için başvurmayı
+                unutmayın! Başvurularımız güncel olarak açıktır, bizi takipte
+                kalın.
               </p>
               <div className="apply-grid">
                 {applicationTypes.map((appType, index) => (
@@ -732,8 +725,8 @@
               name: "Berra FAİK",
               title: "Genel Koordinatör",
               image: "/team/berra.jpg",
-            }
-         /*   ,{
+            },
+            /*   ,{
               name: "Nisanur Hilal TURHAN",
               title: "İnsan Kaynakları Direktörü",
               image: "/team/hilal.jpg",
