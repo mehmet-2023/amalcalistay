@@ -1,11 +1,12 @@
 // middleware.js — platform seviyesinde yönlendirme
-// - /ticketkontroladminamal/* ve var olmayan yollar:
+// - /ticketkontroladminamal/* yolları:
 //     yetkili  -> /ticketkontroladminamal/panel
 //     yetkisiz -> /ticketkontroladminamal/amalbest
+// - 404 sayfası (404.html / 404) dokunulmaz; statik olarak sunulur.
 import { jwtVerify } from 'jose';
 
 export const config = {
-  matcher: ['/((?!_next|api|.*\\..*).*)', '/404.html']
+  matcher: ['/((?!_next|api|.*\\..*).*)']
 };
 
 const LOGIN_PATH = '/ticketkontroladminamal/amalbest';
@@ -61,11 +62,11 @@ export default async function middleware(req) {
     return next();
   }
 
-  // Sadece yönetim alanı ve bilinmeyen (404) yollar yönlendirilir.
+  // Sadece yönetim alanı yönlendirilir. 404 sayfası (404.html) ve
+  // bilinmeyen yollar sunucu tarafından 404 olarak sunulur.
   const isAdminArea = pathname === '/ticketkontroladminamal' ||
     pathname.startsWith('/ticketkontroladminamal/');
-  const is404 = pathname === '/404.html' || pathname === '/404';
-  if (!isAdminArea && !is404) {
+  if (!isAdminArea) {
     return next();
   }
 
