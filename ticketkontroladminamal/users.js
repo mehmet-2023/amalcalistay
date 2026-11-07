@@ -30,6 +30,13 @@
     writeConfigured: false
   };
 
+  var POLL_MS = 5000;
+  var pollTimer = null;
+  var loadSeq = 0;
+  var mutating = 0;
+  var loaded = false;
+  var lastSignature = '';
+
   function toast(msg, kind) {
     toastEl.textContent = msg;
     toastEl.className = 'toast is-visible' + (kind ? ' ' + kind : '');
@@ -60,32 +67,84 @@
     });
   }
 
-  function loadUsers() {
-    clearError();
-    listEl.innerHTML = '';
-    var loading = document.createElement('div');
-    loading.className = 'empty';
-    loading.textContent = 'Yükleniyor';
-    listEl.appendChild(loading);
+  function usersSignature(users) {
+    return users.map(function (u) {
+      var meals = u.meals || [];
+      var taken = u.taken || [];
+      return [
+        u.id,
+        u.name,
+        u.komite || '',
+        meals[0] ? 1 : 0,
+        meals[1] ? 1 : 0,
+        taken[0] ? 1 : 0,
+        taken[1] ? 1 : 0,
+        u.updatedAt || ''
+      ].join('~');
+    }).join('|');
+  }
 
-    api('/api/users', { method: 'GET' })
+  function loadUsers(options) {
+    var silent = !!(options && options.silent);
+    if (silent && mutating) return;
+
+    var seq = ++loadSeq;
+
+    if (!silent) {
+      clearError();
+      listEl.innerHTML = '';
+      var loading = document.createElement('div');
+      loading.className = 'empty';
+      loading.textContent = 'Yükleniyor';
+      listEl.appendChild(loading);
+    }
+
+    return api('/api/users', { method: 'GET' })
       .then(function (r) {
+        if (seq !== loadSeq) return;
         if (r.status === 401) { window.location.replace('../'); return; }
         if (r.status !== 200 || !r.data.ok) {
-          showError((r.data && r.data.error) || 'Kullanıcılar yüklenemedi');
-          listEl.innerHTML = '';
+          if (!silent) {
+            showError((r.data && r.data.error) || 'Kullanıcılar yüklenemedi');
+            listEl.innerHTML = '';
+          }
           return;
         }
-        state.users = r.data.users || [];
+        clearError();
+        var users = r.data.users || [];
         state.mealLabels = r.data.mealLabels || state.mealLabels;
         state.writeConfigured = !!r.data.writeConfigured;
         writeWarning.classList.toggle('is-hidden', state.writeConfigured);
-        render();
+
+        var sig = usersSignature(users);
+        if (!loaded || sig !== lastSignature) {
+          state.users = users;
+          render();
+        }
+        loaded = true;
       })
       .catch(function () {
-        showError('Bağlantı hatası');
-        listEl.innerHTML = '';
+        if (seq !== loadSeq) return;
+        if (!silent) {
+          showError('Bağlantı hatası');
+          listEl.innerHTML = '';
+        }
       });
+  }
+
+  function startPolling() {
+    stopPolling();
+    pollTimer = window.setInterval(function () {
+      if (document.hidden) return;
+      loadUsers({ silent: true });
+    }, POLL_MS);
+  }
+
+  function stopPolling() {
+    if (pollTimer) {
+      window.clearInterval(pollTimer);
+      pollTimer = null;
+    }
   }
 
   function mealState(user, i) {
@@ -95,6 +154,7 @@
   }
 
   function render() {
+    lastSignature = usersSignature(state.users);
     countEl.textContent = String(state.users.length);
     listEl.innerHTML = '';
 
@@ -171,6 +231,8 @@
   }
 
   function patchUser(id, body) {
+    mutating++;
+    loadSeq++;
     api('/api/users/' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify(body) })
       .then(function (r) {
         if (r.status === 401) { window.location.replace('../'); return; }
@@ -182,12 +244,15 @@
           toast((r.data && r.data.error) || 'Güncellenemedi', 'err');
         }
       })
-      .catch(function () { toast('Bağlantı hatası', 'err'); });
+      .catch(function () { toast('Bağlantı hatası', 'err'); })
+      .then(function () { mutating--; });
   }
 
   function removeUser(user) {
     if (!state.writeConfigured) { toast('Yazma yapılandırması eksik', 'err'); return; }
     if (!window.confirm('"' + user.name + '" silinsin mi?')) return;
+    mutating++;
+    loadSeq++;
     api('/api/users/' + encodeURIComponent(user.id), { method: 'DELETE' })
       .then(function (r) {
         if (r.status === 401) { window.location.replace('../'); return; }
@@ -199,7 +264,8 @@
           toast((r.data && r.data.error) || 'Silinemedi', 'err');
         }
       })
-      .catch(function () { toast('Bağlantı hatası', 'err'); });
+      .catch(function () { toast('Bağlantı hatası', 'err'); })
+      .then(function () { mutating--; });
   }
 
   function openQr(user) {
@@ -249,6 +315,8 @@
 
     createBtn.disabled = true;
     createBtn.textContent = 'Ekleniyor...';
+    mutating++;
+    loadSeq++;
 
     api('/api/users', {
       method: 'POST',
@@ -277,17 +345,23 @@
         createBtn.disabled = false;
         createBtn.textContent = 'Kullanıcı Ekle';
         toast('Bağlantı hatası', 'err');
-      });
+      })
+      .then(function () { mutating--; });
   });
 
-  refreshBtn.addEventListener('click', loadUsers);
+  refreshBtn.addEventListener('click', function () { loadUsers(); });
   if (bulkQrBtn) bulkQrBtn.addEventListener('click', downloadBulkQr);
   qrClose.addEventListener('click', function () { qrBackdrop.classList.add('is-hidden'); });
   qrBackdrop.addEventListener('click', function (e) {
     if (e.target === qrBackdrop) qrBackdrop.classList.add('is-hidden');
   });
 
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) loadUsers({ silent: true });
+  });
+  window.addEventListener('pagehide', stopPolling);
+
   window.AMAL_GUARD_READY.then(function (r) {
-    if (r && r.ok) loadUsers();
+    if (r && r.ok) loadUsers().then(startPolling);
   });
 })();
